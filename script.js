@@ -2,7 +2,6 @@
 /* -----------------------------------------
    M I K E Y  D I L L O N
    INTERACTIONS — VERSION 2.2
-   THE SKETCHBOOK
 ------------------------------------------ */
 
 // -----------------------------------------
@@ -50,53 +49,7 @@ if (
 
 
 // -----------------------------------------
-// 2. PAPER PARALLAX
-// -----------------------------------------
-
-// The paper texture moves more slowly than
-// the foreground as the visitor scrolls.
-
-const root = document.documentElement;
-
-let scrollTicking = false;
-
-function updatePaperParallax() {
-  if (prefersReducedMotion.matches) {
-    root.style.setProperty("--paper-parallax-y", "0px");
-    scrollTicking = false;
-    return;
-  }
-
-  const offset = window.scrollY * -0.12;
-
-  root.style.setProperty(
-    "--paper-parallax-y",
-    `${offset}px`
-  );
-
-  scrollTicking = false;
-}
-
-function requestPaperParallaxUpdate() {
-  if (!scrollTicking) {
-    window.requestAnimationFrame(updatePaperParallax);
-    scrollTicking = true;
-  }
-}
-
-if (!prefersReducedMotion.matches) {
-  window.addEventListener(
-    "scroll",
-    requestPaperParallaxUpdate,
-    { passive: true }
-  );
-
-  updatePaperParallax();
-}
-
-
-// -----------------------------------------
-// 3. POINTER INTERACTION
+// 2. SUBTLE POINTER MOVEMENT
 // -----------------------------------------
 
 // A small pointer response on larger screens.
@@ -130,6 +83,71 @@ if (canHover.matches) {
 
 
 // -----------------------------------------
+// 3. PAPER TEXTURE PARALLAX
+// -----------------------------------------
+
+// The paper texture moves slightly slower than the page.
+// This creates a subtle sense of depth as you scroll.
+
+const isMobile = window.matchMedia("(max-width: 700px)");
+
+let parallaxFrame = null;
+
+function updatePaperParallax() {
+  if (prefersReducedMotion.matches) {
+    document.body.style.setProperty(
+      "--paper-parallax-y",
+      "0px"
+    );
+    return;
+  }
+
+  const scrollPosition = window.scrollY;
+
+  // Gentle movement on desktop, even gentler on mobile.
+  const movement = isMobile.matches ? 0.035 : 0.10;
+
+  const offset = -(scrollPosition * movement);
+
+  document.body.style.setProperty(
+    "--paper-parallax-y",
+    `${offset}px`
+  );
+}
+
+function requestParallaxUpdate() {
+  if (parallaxFrame !== null) return;
+
+  parallaxFrame = window.requestAnimationFrame(() => {
+    updatePaperParallax();
+    parallaxFrame = null;
+  });
+}
+
+// Set the initial position.
+updatePaperParallax();
+
+// Update as the page scrolls.
+window.addEventListener(
+  "scroll",
+  requestParallaxUpdate,
+  { passive: true }
+);
+
+// Keep the effect responsive to screen size changes.
+window.addEventListener(
+  "resize",
+  requestParallaxUpdate,
+  { passive: true }
+);
+
+// Respect changes to the user's motion preference.
+prefersReducedMotion.addEventListener("change", () => {
+  updatePaperParallax();
+});
+
+
+// -----------------------------------------
 // 4. HIDDEN COLOR MODE
 // -----------------------------------------
 
@@ -155,7 +173,7 @@ document.addEventListener("keydown", (event) => {
 
 
 // -----------------------------------------
-// 5. A MESSAGE FOR THE CURIOUS
+// 5. CONSOLE EASTER EGG
 // -----------------------------------------
 
 console.log(

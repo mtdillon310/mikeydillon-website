@@ -1136,6 +1136,13 @@ a {
   }
 }
 
+
+/* SUBTLE POINTER MOVEMENT */
+
+.project-piece {
+  translate: var(--pointer-x, 0px) var(--pointer-y, 0px);
+}
+
 /* MOBILE — RECOMPOSE, DON'T SHRINK */
 
 @media (max-width: 700px) {

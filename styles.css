@@ -417,4 +417,30 @@ footer {
     flex-wrap: wrap;
     font-size: 8px;
   }
+
+
+/* SCROLL REVEAL STATES */
+
+.reveal-ready {
+  opacity: 0;
+  transform: translateY(35px);
+  transition:
+    opacity 0.9s ease,
+    transform 0.9s ease;
+}
+
+.reveal-ready.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.project.is-exploring {
+  filter: saturate(1.15);
+}
+
+.secret-mode {
+  --paper: #d8ded4;
+  --teal: #a15e49;
+  --lime: #d4a078;
+  transition: background 0.8s ease;
 }

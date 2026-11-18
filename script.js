@@ -1,15 +1,12 @@
 
 /* -----------------------------------------
    M I K E Y  D I L L O N
-   INTERACTIONS — VERSION 2.2
+   INTERACTIONS — VERSION 2.3
 ------------------------------------------ */
 
 // -----------------------------------------
 // 1. SCROLL REVEALS
 // -----------------------------------------
-
-// Reveal elements as they enter the viewport.
-// Content remains visible if JavaScript is unavailable.
 
 const revealTargets = document.querySelectorAll(
   ".piece, .edition-mark"
@@ -52,9 +49,6 @@ if (
 // 2. SUBTLE POINTER MOVEMENT
 // -----------------------------------------
 
-// A small pointer response on larger screens.
-// Disabled on touch devices.
-
 const canHover = window.matchMedia(
   "(hover: hover) and (pointer: fine)"
 );
@@ -86,8 +80,9 @@ if (canHover.matches) {
 // 3. PAPER TEXTURE PARALLAX
 // -----------------------------------------
 
-// The paper texture moves slightly slower than the page.
-// This creates a subtle sense of depth as you scroll.
+// The paper moves gently as the page scrolls.
+// Movement is capped so the texture always
+// covers the visible page.
 
 const isMobile = window.matchMedia("(max-width: 700px)");
 
@@ -104,10 +99,13 @@ function updatePaperParallax() {
 
   const scrollPosition = window.scrollY;
 
-  // Gentle movement on desktop, even gentler on mobile.
   const movement = isMobile.matches ? 0.035 : 0.10;
 
-  const offset = -(scrollPosition * movement);
+  // Cap movement at 45px to prevent exposed edges.
+  const offset = Math.max(
+    -45,
+    -(scrollPosition * movement)
+  );
 
   document.body.style.setProperty(
     "--paper-parallax-y",
@@ -124,24 +122,20 @@ function requestParallaxUpdate() {
   });
 }
 
-// Set the initial position.
 updatePaperParallax();
 
-// Update as the page scrolls.
 window.addEventListener(
   "scroll",
   requestParallaxUpdate,
   { passive: true }
 );
 
-// Keep the effect responsive to screen size changes.
 window.addEventListener(
   "resize",
   requestParallaxUpdate,
   { passive: true }
 );
 
-// Respect changes to the user's motion preference.
 prefersReducedMotion.addEventListener("change", () => {
   updatePaperParallax();
 });
